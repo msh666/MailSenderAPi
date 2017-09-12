@@ -1,0 +1,85 @@
+﻿@{
+    ViewBag.Title = "Mails";
+}
+
+<h2>Create New Mail</h2>
+  
+    <div class="container">
+        <hr />
+        <form id="inputForm">
+            <div class="form-group row">
+                <label for="recipients" class="col-md-1 col-sm-2 col-form-label">To</label>
+                <div class="col-md-10">
+                    <input type="email" class="form-control emails" id="recipients" placeholder="Enter email" name="recipients" required/>
+                    <span id="addRecipient" class="glyphicon glyphicon-plus" onclick="addRecipient()"></span>
+                </div>
+            </div>
+        
+            <div id="newRecipient">
+            
+            </div>
+
+            <div class="form-group row">
+                <label for="subject" class="col-md-1 col-sm-2 col-form-label">Subject</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" id="subject"/>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="body" class="col-md-1 col-sm-2 col-form-label">Body</label>
+                <div class="col-md-10">
+                    <textarea class="form-control" id="body" rows="5"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-offset-1 col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-default" id="sendMail">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $('#inputForm').submit(function (event) {
+                event.preventDefault();
+                SendMail();
+            });
+        });
+
+        function addRecipient() {
+            $('#addRecipient').remove();
+            $('#newRecipient').append('<div class="form-group row"><div class="col-md-10 col-md-offset-1"><input type="text" class="form-control emails" placeholder="Enter email" name="recipients"/><span id="addRecipient" class="glyphicon glyphicon-plus" onclick="addRecipient()"></span></div></div>');
+        }
+
+        function SendMail() {
+            var recipients = [];
+            $('.emails').each(function () {
+                recipients.push($(this).val());
+            });
+            var mail = {
+                "subject": $('#subject').val(),
+                "body": $('#body').val(),
+                "recipients": recipients
+            };
+
+            $.ajax({
+                url: '/api/mails/',
+                type: 'POST',
+                data: JSON.stringify(mail),
+                contentType: "application/json;charset=utf-8",
+                success: function (data) {
+                    alert(data);
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+        }
+    </script>
+}

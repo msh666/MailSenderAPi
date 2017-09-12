@@ -1,0 +1,55 @@
+﻿@{
+    ViewBag.Title = "Sended Mails";
+}
+
+<div class="container">
+    <div class="col-sm-12">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Recipient</th>
+                <th>Subject</th>
+                <th>Body</th>
+                <th>Sending Date</th>
+                <th>Result</th>
+                <th>Failed Message</th>
+            </tr>
+            </thead>
+            <tbody id="tableBody">            
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            GetAllMails();
+        });
+
+        function GetAllMails() {
+            $.ajax({
+                url: '/api/Mails',
+                type: 'GET',
+                contentType: "json",
+                dataType: 'json',
+                cache: false,
+                success: function (data) {
+                    ShowData(data);
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+        }
+
+        function ShowData(data) {
+            $.each(data,
+                function(key, elem) {
+                    $('<tr><td>' + elem.SentId + '</td><td>' + elem.Recipient + '</td><td>' + elem.Mail.Subject + '</td><td>' + elem.Mail.Body + '</td><td>' + new Date(elem.Mail.SendingDate).toLocaleString() + '</td><td>' + elem.Mail.Result + '</td><td>' + elem.Mail.FailedMessage + '</td></tr>"').appendTo('#tableBody');
+                });
+        }
+    </script>
+}
